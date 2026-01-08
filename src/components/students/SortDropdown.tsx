@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowUpDown, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { SortOption } from '@/types/student';
 import { cn } from '@/lib/utils';
 
@@ -11,22 +12,27 @@ interface SortDropdownProps {
 }
 
 const sortOptions: { value: SortOption; label: string; group: string }[] = [
-  { value: 'name-asc', label: 'Name (A → Z)', group: 'Name' },
-  { value: 'name-desc', label: 'Name (Z → A)', group: 'Name' },
+  { value: 'name-asc', label: 'A → Z', group: 'Student Name' },
+  { value: 'name-desc', label: 'Z → A', group: 'Student Name' },
   { value: 'submission-recent', label: 'Most Recent', group: 'Submissions' },
   { value: 'submission-oldest', label: 'Oldest First', group: 'Submissions' },
   { value: 'help-recent', label: 'Most Recent', group: 'Help Requests' },
   { value: 'help-oldest', label: 'Oldest First', group: 'Help Requests' },
+  { value: 'present-first', label: 'Present First', group: 'Presence' },
+  { value: 'absent-first', label: 'Absent First', group: 'Presence' },
+  { value: 'tasks-high', label: 'Most Tasks', group: 'Tasks Count' },
+  { value: 'tasks-low', label: 'Fewest Tasks', group: 'Tasks Count' },
 ];
 
 const defaultSort: SortOption = 'name-asc';
+
+const sortGroups = ['Student Name', 'Submissions', 'Help Requests', 'Presence', 'Tasks Count'];
 
 export function SortDropdown({ value, onChange }: SortDropdownProps) {
   const [open, setOpen] = useState(false);
   const isCustomSort = value !== defaultSort;
   
   const currentOption = sortOptions.find(opt => opt.value === value);
-  const displayLabel = currentOption ? `${currentOption.group}: ${currentOption.label}` : 'Sort';
 
   const handleSelect = (sortValue: SortOption) => {
     onChange(sortValue);
@@ -45,6 +51,11 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
         >
           <ArrowUpDown className="h-4 w-4 text-muted-foreground" />
           <span className="font-medium">SORT</span>
+          {isCustomSort && currentOption && (
+            <span className="text-xs text-accent font-normal hidden sm:inline">
+              ({currentOption.group})
+            </span>
+          )}
           <ChevronDown className={cn(
             "h-4 w-4 text-muted-foreground transition-transform duration-200",
             open && "rotate-180"
@@ -53,29 +64,23 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
       </PopoverTrigger>
       <PopoverContent className="w-56 p-0 bg-popover border-border shadow-lg" align="end">
         <div className="p-3 border-b border-border">
-          <span className="font-semibold text-sm">Sort Students</span>
+          <span className="font-semibold text-sm">Sort Students By</span>
         </div>
         
-        <div className="p-1">
-          <SortGroup 
-            title="Name"
-            options={sortOptions.filter(o => o.group === 'Name')}
-            currentValue={value}
-            onSelect={handleSelect}
-          />
-          <SortGroup 
-            title="Submissions"
-            options={sortOptions.filter(o => o.group === 'Submissions')}
-            currentValue={value}
-            onSelect={handleSelect}
-          />
-          <SortGroup 
-            title="Help Requests"
-            options={sortOptions.filter(o => o.group === 'Help Requests')}
-            currentValue={value}
-            onSelect={handleSelect}
-          />
-        </div>
+        <ScrollArea className="max-h-80">
+          <div className="p-1">
+            {sortGroups.map((groupName, index) => (
+              <SortGroup 
+                key={groupName}
+                title={groupName}
+                options={sortOptions.filter(o => o.group === groupName)}
+                currentValue={value}
+                onSelect={handleSelect}
+                showDivider={index > 0}
+              />
+            ))}
+          </div>
+        </ScrollArea>
       </PopoverContent>
     </Popover>
   );
@@ -86,12 +91,18 @@ interface SortGroupProps {
   options: { value: SortOption; label: string }[];
   currentValue: SortOption;
   onSelect: (value: SortOption) => void;
+  showDivider?: boolean;
 }
 
-function SortGroup({ title, options, currentValue, onSelect }: SortGroupProps) {
+function SortGroup({ title, options, currentValue, onSelect, showDivider }: SortGroupProps) {
+  const isActiveGroup = options.some(o => o.value === currentValue);
+  
   return (
-    <div className="py-1">
-      <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+    <div className={cn("py-1", showDivider && "border-t border-border mt-1 pt-2")}>
+      <div className={cn(
+        "px-2 py-1.5 text-xs font-semibold uppercase tracking-wider",
+        isActiveGroup ? "text-accent" : "text-muted-foreground"
+      )}>
         {title}
       </div>
       {options.map((option) => (

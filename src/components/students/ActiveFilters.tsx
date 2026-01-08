@@ -22,6 +22,10 @@ const sortLabels: Record<SortOption, string> = {
   'submission-oldest': 'Oldest Submissions',
   'help-recent': 'Recent Help Requests',
   'help-oldest': 'Oldest Help Requests',
+  'present-first': 'Present First',
+  'absent-first': 'Absent First',
+  'tasks-high': 'Most Tasks',
+  'tasks-low': 'Fewest Tasks',
 };
 
 export function ActiveFilters({
