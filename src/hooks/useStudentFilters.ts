@@ -85,6 +85,16 @@ export function useStudentFilters(students: Student[]) {
           if (!a.lastHelpRequestDate) return 1;
           if (!b.lastHelpRequestDate) return -1;
           return a.lastHelpRequestDate.getTime() - b.lastHelpRequestDate.getTime();
+        case 'present-first':
+          if (a.isOnline === b.isOnline) return 0;
+          return a.isOnline ? -1 : 1;
+        case 'absent-first':
+          if (a.isOnline === b.isOnline) return 0;
+          return a.isOnline ? 1 : -1;
+        case 'tasks-high':
+          return b.tasks - a.tasks;
+        case 'tasks-low':
+          return a.tasks - b.tasks;
         default:
           return 0;
       }

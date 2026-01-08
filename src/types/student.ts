@@ -26,7 +26,11 @@ export type SortOption =
   | 'submission-recent' 
   | 'submission-oldest'
   | 'help-recent'
-  | 'help-oldest';
+  | 'help-oldest'
+  | 'present-first'
+  | 'absent-first'
+  | 'tasks-high'
+  | 'tasks-low';
 
 export interface FilterState {
   search: string;
