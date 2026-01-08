@@ -1,14 +1,19 @@
+import { useState } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { SearchInput } from '@/components/students/SearchInput';
 import { GroupsFilter } from '@/components/students/GroupsFilter';
 import { SortDropdown } from '@/components/students/SortDropdown';
+import { FilterPanel } from '@/components/students/FilterPanel';
 import { ActiveFilters } from '@/components/students/ActiveFilters';
 import { StudentList } from '@/components/students/StudentList';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useStudentFilters } from '@/hooks/useStudentFilters';
 import { students, allGroups } from '@/data/mockData';
 
 const Index = () => {
+  const [uxMode, setUxMode] = useState<'dropdown' | 'panel'>('panel');
+  
   const {
     filters,
     filteredStudents,
@@ -53,19 +58,39 @@ const Index = () => {
               />
             </div>
 
-            {/* Filter Bar */}
+            {/* UX Mode Toggle */}
             <div className="flex items-center justify-between gap-4 mb-4">
               <div className="flex items-center gap-3">
-                <GroupsFilter
-                  groups={allGroups}
-                  selectedGroups={filters.selectedGroups}
-                  onChange={setSelectedGroups}
-                />
-                <SortDropdown
-                  value={filters.sort}
-                  onChange={setSort}
-                />
+                {uxMode === 'dropdown' ? (
+                  <>
+                    <GroupsFilter
+                      groups={allGroups}
+                      selectedGroups={filters.selectedGroups}
+                      onChange={setSelectedGroups}
+                    />
+                    <SortDropdown
+                      value={filters.sort}
+                      onChange={setSort}
+                    />
+                  </>
+                ) : (
+                  <FilterPanel
+                    groups={allGroups}
+                    selectedGroups={filters.selectedGroups}
+                    sort={filters.sort}
+                    onGroupsChange={setSelectedGroups}
+                    onSortChange={setSort}
+                    onClearAll={clearAll}
+                  />
+                )}
               </div>
+              
+              <Tabs value={uxMode} onValueChange={(v) => setUxMode(v as 'dropdown' | 'panel')}>
+                <TabsList className="h-8">
+                  <TabsTrigger value="dropdown" className="text-xs px-3">Dropdowns</TabsTrigger>
+                  <TabsTrigger value="panel" className="text-xs px-3">Side Panel</TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
 
             {/* Active Filters */}
