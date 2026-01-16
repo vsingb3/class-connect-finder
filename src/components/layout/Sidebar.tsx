@@ -1,15 +1,16 @@
 import { Home, Users, Calendar, FileText, BookOpen, BarChart3, Settings, HelpCircle, ClipboardList } from 'lucide-react';
+import { useLocation, Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Home', icon: Home, href: '#', current: false },
-  { name: 'Students', icon: Users, href: '#', current: true },
-  { name: 'Attendance', icon: ClipboardList, href: '#', current: false },
-  { name: 'Groups', icon: Users, href: '#', current: false },
-  { name: 'Submissions', icon: FileText, href: '#', current: false },
-  { name: 'Courses', icon: BookOpen, href: '#', current: false },
-  { name: 'Calendar', icon: Calendar, href: '#', current: false },
-  { name: 'Reports', icon: BarChart3, href: '#', current: false },
+  { name: 'Home', icon: Home, href: '#' },
+  { name: 'Students', icon: Users, href: '/' },
+  { name: 'Attendance', icon: ClipboardList, href: '#' },
+  { name: 'Groups', icon: Users, href: '/groups' },
+  { name: 'Submissions', icon: FileText, href: '#' },
+  { name: 'Courses', icon: BookOpen, href: '#' },
+  { name: 'Calendar', icon: Calendar, href: '#' },
+  { name: 'Reports', icon: BarChart3, href: '#' },
 ];
 
 const secondaryNavigation = [
@@ -18,6 +19,8 @@ const secondaryNavigation = [
 ];
 
 export function Sidebar() {
+  const location = useLocation();
+
   return (
     <aside className="w-56 bg-sidebar border-r border-sidebar-border flex flex-col">
       {/* Logo */}
@@ -33,22 +36,28 @@ export function Sidebar() {
       {/* Main Navigation */}
       <nav className="flex-1 px-3 py-2">
         <ul className="space-y-1">
-          {navigation.map((item) => (
-            <li key={item.name}>
-              <a
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                  item.current
-                    ? "text-sidebar-primary border-l-2 border-sidebar-primary bg-sidebar-accent"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                {item.name}
-              </a>
-            </li>
-          ))}
+          {navigation.map((item) => {
+            const isCurrent = item.href !== '#' && location.pathname === item.href;
+            const NavComponent = item.href === '#' ? 'a' : Link;
+            
+            return (
+              <li key={item.name}>
+                <NavComponent
+                  to={item.href !== '#' ? item.href : undefined}
+                  href={item.href === '#' ? item.href : undefined}
+                  className={cn(
+                    "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                    isCurrent
+                      ? "text-sidebar-primary border-l-2 border-sidebar-primary bg-sidebar-accent"
+                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  )}
+                >
+                  <item.icon className="w-5 h-5" />
+                  {item.name}
+                </NavComponent>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
