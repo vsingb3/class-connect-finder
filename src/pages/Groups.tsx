@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Header } from '@/components/layout/Header';
 import { SearchInput } from '@/components/students/SearchInput';
 import { GroupCard } from '@/components/groups/GroupCard';
 import { GroupTypeFilter } from '@/components/groups/GroupTypeFilter';
+import { GroupActiveFilters } from '@/components/groups/GroupActiveFilters';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { schoolGroups } from '@/data/groupsData';
@@ -14,6 +15,13 @@ const Groups = () => {
   const [activeTab, setActiveTab] = useState('all-groups');
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<GroupType | 'all'>('all');
+
+  const clearSearch = useCallback(() => setSearch(''), []);
+  const resetType = useCallback(() => setTypeFilter('all'), []);
+  const clearAll = useCallback(() => {
+    setSearch('');
+    setTypeFilter('all');
+  }, []);
 
   // My Groups (short list, no filtering needed)
   const myGroups = useMemo(() => {
@@ -106,6 +114,17 @@ const Groups = () => {
                       className="w-full md:max-w-xs"
                     />
                   </div>
+                </div>
+
+                {/* Active Filters */}
+                <div className="mb-4">
+                  <GroupActiveFilters
+                    search={search}
+                    typeFilter={typeFilter}
+                    onClearSearch={clearSearch}
+                    onResetType={resetType}
+                    onClearAll={clearAll}
+                  />
                 </div>
 
                 {/* Results Count */}
