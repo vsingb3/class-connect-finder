@@ -77,6 +77,10 @@ export function useStudentFilters(students: Student[]) {
           if (!a.lastSubmissionDate) return 1;
           if (!b.lastSubmissionDate) return -1;
           return a.lastSubmissionDate.getTime() - b.lastSubmissionDate.getTime();
+        case 'submission-high':
+          return b.submissions - a.submissions;
+        case 'submission-low':
+          return a.submissions - b.submissions;
         case 'help-recent':
           if (!a.lastHelpRequestDate) return 1;
           if (!b.lastHelpRequestDate) return -1;
@@ -85,6 +89,10 @@ export function useStudentFilters(students: Student[]) {
           if (!a.lastHelpRequestDate) return 1;
           if (!b.lastHelpRequestDate) return -1;
           return a.lastHelpRequestDate.getTime() - b.lastHelpRequestDate.getTime();
+        case 'help-high':
+          return b.helpRequests - a.helpRequests;
+        case 'help-low':
+          return a.helpRequests - b.helpRequests;
         case 'present-first':
           if (a.isOnline === b.isOnline) return 0;
           return a.isOnline ? -1 : 1;
